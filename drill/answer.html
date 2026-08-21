@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>結果 | GLORY ACADEMY</title>
+<meta name="robots" content="noindex" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+  <header class="hdr">
+    <a class="back" href="javascript:history.back()" aria-label="戻る">‹</a>
+    <div class="title">結果</div>
+    <div class="qno" id="qno"></div>
+  </header>
+
+  <main class="screen">
+    <div class="result-hero">
+      <div class="verdict" id="verdict"></div>
+      <div class="answer-line" id="answerLine"></div>
+      <div class="your-pick" id="yourPick"></div>
+    </div>
+
+    <div class="result-card">
+      <div class="rc-head" id="handHead"></div>
+      <div id="breakdown"></div>
+    </div>
+  </main>
+
+  <div class="dock">
+    <a class="btn-primary" id="next">レンジ表・解説を見る →</a>
+  </div>
+</div>
+
+<script src="drill.js"></script>
+<script>
+  const qi = Math.max(0, (parseInt(getParam("q"), 10) || 1) - 1);
+  const q = QUESTIONS[qi] || QUESTIONS[0];
+  const pick = getParam("a");
+
+  document.getElementById("qno").textContent = q.no + " 問目";
+
+  const verdict = document.getElementById("verdict");
+  const answerLine = document.getElementById("answerLine");
+  const yourPick = document.getElementById("yourPick");
+
+  if (q.correct == null) {
+    // 準備中の問題: 判定なし
+    verdict.className = "verdict neutral";
+    verdict.innerHTML = '<span class="icon">✓</span> 回答完了';
+    answerLine.innerHTML = "この問題は<b>準備中</b>です";
+  } else {
+    const isCorrect = pick === q.correct;
+    verdict.className = "verdict " + (isCorrect ? "ok" : "ng");
+    verdict.innerHTML =
+      '<span class="icon">' + (isCorrect ? "✓" : "✕") + "</span> " +
+      (isCorrect ? "正解！" : "不正解");
+    answerLine.innerHTML = "正解は <b>" + q.correctLabel + "</b>";
+    if (pick && ACTION_META[pick]) {
+      yourPick.innerHTML =
+        "あなたの回答： <b>" +
+        ACTION_META[pick].label +
+        "</b>" +
+        (isCorrect ? "" : "（不正解）");
+    }
+  }
+
+  document.getElementById("handHead").textContent =
+    "ハンド： " + q.hand + " の内訳";
+  renderBreakdown(document.getElementById("breakdown"), q);
+
+  document.getElementById("next").href = "range.html?q=" + q.no;
+</script>
+</body>
+</html>

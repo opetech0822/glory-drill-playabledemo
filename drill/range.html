@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>レンジ表 | GLORY ACADEMY</title>
+<meta name="robots" content="noindex" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+  <header class="hdr">
+    <a class="back" href="javascript:history.back()" aria-label="戻る">‹</a>
+    <div class="title">レンジ表</div>
+    <div class="qno" id="qno"></div>
+  </header>
+
+  <main class="screen">
+    <div id="rangeArea"></div>
+
+    <div class="hand-detail">
+      <div class="hd-title" id="handTitle"></div>
+      <div id="breakdown"></div>
+    </div>
+
+    <div class="explain">
+      <span class="ex-label">📝 解説</span>
+      <div id="explanation"></div>
+      <span class="dummy-tag" id="dummyTag" style="display:none">ダミーテキスト</span>
+    </div>
+  </main>
+
+  <div class="dock">
+    <div class="progress" id="progress"></div>
+    <a class="btn-primary" id="next"></a>
+    <a class="btn-ghost" id="skip" href="https://gloryacademy.app/training">
+      本番のトレーニングへ進む
+    </a>
+  </div>
+</div>
+
+<script src="drill.js"></script>
+<script>
+  const qi = Math.max(0, (parseInt(getParam("q"), 10) || 1) - 1);
+  const q = QUESTIONS[qi] || QUESTIONS[0];
+
+  document.getElementById("qno").textContent = q.no + " 問目";
+
+  // レンジ表: 画像があれば画像、無ければ13x13グリッド(プレースホルダ)
+  const area = document.getElementById("rangeArea");
+  if (q.rangeImg) {
+    const img = document.createElement("img");
+    img.className = "range-img";
+    img.alt = q.hand + " のレンジ表";
+    img.src = q.rangeImg;
+    const fb = document.createElement("div");
+    fb.className = "range-fallback";
+    fb.textContent = "レンジ表画像（" + q.rangeImg.split("/").pop() + "）を配置してください";
+    img.onerror = function () {
+      img.style.display = "none";
+      fb.style.display = "flex";
+    };
+    area.appendChild(img);
+    area.appendChild(fb);
+  } else {
+    renderRangeGrid(area, q);
+  }
+
+  document.getElementById("handTitle").textContent = q.hand;
+  renderBreakdown(document.getElementById("breakdown"), q);
+
+  const exMount = document.getElementById("explanation");
+  const paras = Array.isArray(q.explanation) ? q.explanation : [q.explanation];
+  paras.forEach((t) => {
+    const p = document.createElement("p");
+    p.textContent = t;
+    exMount.appendChild(p);
+  });
+  if (q.correct == null) {
+    document.getElementById("dummyTag").style.display = "inline-block";
+  }
+
+  renderProgress(document.getElementById("progress"), qi);
+
+  // 次の問題へ / 最終問題なら本番トレーニングへ
+  const next = document.getElementById("next");
+  const isLast = qi >= QUESTIONS.length - 1;
+  if (isLast) {
+    next.textContent = "トレーニングを始める →";
+    next.href = "https://gloryacademy.app/training";
+    document.getElementById("skip").style.display = "none";
+  } else {
+    next.textContent = "次の問題へ →";
+    next.href = "problem.html?q=" + (q.no + 1);
+  }
+</script>
+</body>
+</html>

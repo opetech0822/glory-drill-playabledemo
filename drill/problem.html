@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>トレーニング | GLORY ACADEMY</title>
+<meta name="robots" content="noindex" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="app">
+  <header class="hdr">
+    <a class="back" href="javascript:history.back()" aria-label="戻る">‹</a>
+    <div class="title">トレーニング</div>
+    <div class="qno" id="qno"></div>
+  </header>
+
+  <main class="screen">
+    <div class="meta" id="meta"></div>
+    <h1 class="q-title" id="title"></h1>
+    <ul class="q-sub" id="sub"></ul>
+    <div id="board"></div>
+    <div id="hand"></div>
+  </main>
+
+  <div id="dock"></div>
+</div>
+
+<script src="drill.js"></script>
+<script>
+  const qi = Math.max(0, (parseInt(getParam("q"), 10) || 1) - 1);
+  const q = QUESTIONS[qi] || QUESTIONS[0];
+
+  document.getElementById("qno").textContent = q.no + " 問目";
+  document.getElementById("meta").innerHTML =
+    '<span class="cap">🎓</span><span>' + q.category + "</span>";
+  document.getElementById("title").textContent = q.title;
+
+  const sub = document.getElementById("sub");
+  q.sub.forEach((s) => {
+    const li = document.createElement("li");
+    li.textContent = s;
+    sub.appendChild(li);
+  });
+
+  renderTable(document.getElementById("board"), q);
+  renderHand(document.getElementById("hand"), q);
+  renderActions(document.getElementById("dock"), q, "answer.html?q=" + q.no);
+</script>
+</body>
+</html>
