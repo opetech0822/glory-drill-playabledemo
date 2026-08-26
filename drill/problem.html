@@ -45,7 +45,9 @@
 
   renderTable(document.getElementById("board"), q);
   renderHand(document.getElementById("hand"), q);
-  renderActions(document.getElementById("dock"), q, "answer.html?q=" + q.no);
+  // ゲート付きの問題(例:3問目)は、回答後に登録案内ページを挟む
+  const dest = q.gate ? ("register.html?q=" + q.no) : ("answer.html?q=" + q.no);
+  renderActions(document.getElementById("dock"), q, dest);
 </script>
 </body>
 </html>
